@@ -1,0 +1,14 @@
+{% extends 'base_account.html' %}
+{% block content %}
+<h3> {{tittle}}</h3>
+<div class="content-section">
+    <form method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        {{user_form.as_p}}
+        {{user_profile_form.as_p}}
+        <a href="{% url 'change_password' user_profile.slug %}"><button type="button" class="btn btn-outline-secondary">Поменять пароль</button></a>
+        <button class= "btn btn-outline-info" type="submit">Сохранить</button>
+    </form>
+</div>
+
+{% endblock %}

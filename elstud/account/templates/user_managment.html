@@ -1,0 +1,8 @@
+{% extends 'base_account.html' %}
+
+{% block content %}
+<ul>
+    <li><a href="{% url 'create_new_user' %}">Создать нового пользователя</a></li>
+    <li><a href="{% url 'user_list' %}">Просмотр пользователей</a></li>
+</ul>
+{% endblock %}

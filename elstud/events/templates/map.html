@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My Map</title>
+    <!-- подключение CSS-файлов для Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha384-THJ/P8EGI+gKOkOPIBvZG3imY8+mCKG4oLGr+4wTK0f4t8bue5j5e5LRo0tZxta9" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.css" />
+
+    <!-- подключение JS-файлов для Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha384-dsbRdHfnF2Qxt3g2zAgm3HvZGxmnDj+4k67l4Q4a4tC5WTt+v5z5+IdE9S46vwxZ" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.js"></script>
+    
+    <!-- стили для карты -->
+    <style>
+        #mapid { height: 500px; }
+    </style>
+</head>
+<body>
+    <div id="mapid"></div>
+
+    <!-- скрипт для создания карты и добавления контрола поиска -->
+    <script>
+        var map = L.map('mapid').setView([55.796127, 49.106405], 13); // здесь задайте нужные координаты и уровень зума
+
+        // добавление слоя карты
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // добавление контрола поиска
+        L.Control.Search = L.Control.extend({
+            onAdd: function(map) {
+                var searchDiv = L.DomUtil.create('div', 'search-container');
+                L.DomEvent.disableClickPropagation(searchDiv);
+                return searchDiv;
+            }
+        });
+
+        (new L.Control.Search()).addTo(map);
+    </script>
+</body>
+</html>

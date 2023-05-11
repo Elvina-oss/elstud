@@ -1,0 +1,51 @@
+{% extends 'base_shop.html' %}
+{% block content %}
+
+
+
+<div class="container">
+    <div class="row d-flex">
+          <div class="col-md-3">
+              <div class="sticky-top">
+                  <div class="btn-group-vertical">
+                      <button type="button" class="btn btn-primary">Кнопка 1</button>
+                      <button type="button" class="btn btn-primary">Кнопка 2</button>
+                      <div class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                              Кнопка 3
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <li><a class="dropdown-item" href="#">Ссылка 1</a></li>
+                              <li><a class="dropdown-item" href="#">Ссылка 2</a></li>
+                              <li><a class="dropdown-item" href="#">Ссылка 3</a></li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        {% for product in products %}
+            <div class="col-md-3 p-3 h-100">
+                <div class="card mb-4 box-shadow vh-100">
+                    <img class="card-img-top" src="{{ product.photo.url }}" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ product.name }}</h4>
+                        <p class="card-text">{{ product.content | truncatechars:100}}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="#" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                                <a href="#" class="btn btn-sm btn-outline-success">
+                                    <i class="bi-cart-plus" style="font-size: 1rem;"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi-heart" style="font-size: 1rem;"></i>
+                                </a>
+                            </div>
+                            <small class="text-muted">{{ product.price }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
