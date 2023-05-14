@@ -1,0 +1,39 @@
+{% extends 'base_shop.html' %}
+
+{% block content %}
+
+
+<div class="container mb-3">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary bg-opacity-50 bg-gradient">{{ 'Добавить новый продукт'|title }}</div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for f in form %}
+            <div class="form-group mb-3">
+              <label for="{{ f.id_for_label }}">{{ f.label }}:</label>
+              {{ f }}
+            </div>
+            {% endfor %}
+
+
+            <button type="submit" class="btn btn-outline-primary w-3">{{ 'Добавить'|title }}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add form-control class to all inputs inside form-group elements
+  document.addEventListener('DOMContentLoaded', function() {
+    let inputs = document.querySelectorAll('.form-group input:not([type="checkbox"]), .form-group textarea');
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].classList.add('form-control');
+    }
+  });
+</script>
+{% endblock %}

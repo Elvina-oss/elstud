@@ -1,31 +1,54 @@
 {% extends 'base_shop.html' %}
 {% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+      <div class="dropdown mx-4">
+          <button class="btn btn-light dropdown-toggle" type="button"  data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi-list"></i> Каталог
+          </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for cat in cats %}
+              <li><a class="dropdown-item" href="{% url 'shop_index_by_category' category_slug=cat.slug %}">{{cat.name}}</a></li>
+            {% endfor %}
+          </ul>
+      </div>
+      <form class="d-flex" method="get">
+        <div class="col-md-8 mx-4">
+            <input class="form-control me-2" type="search" placeholder="Найти" aria-label="Search" name="q">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-outline-secondary" type="submit"><i class="bi-search"></i></button>
+        </div>
+      </form>
+    </ul>
 
 
+
+    <div class="d-flex">
+      <ul class="navbar-nav me-3 mb-2 mb-lg-0">
+        {% if not perms.shop.add_product %}
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi-heart text-danger" ></i> Избранное</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi-cart text-success"></i> Корзина</a>
+        </li>
+        {% endif %}
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
 
 <div class="container">
     <div class="row d-flex">
-          <div class="col-md-3">
-              <div class="sticky-top">
-                  <div class="btn-group-vertical">
-                      <button type="button" class="btn btn-primary">Кнопка 1</button>
-                      <button type="button" class="btn btn-primary">Кнопка 2</button>
-                      <div class="dropdown">
-                          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                              Кнопка 3
-                          </button>
-                          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                              <li><a class="dropdown-item" href="#">Ссылка 1</a></li>
-                              <li><a class="dropdown-item" href="#">Ссылка 2</a></li>
-                              <li><a class="dropdown-item" href="#">Ссылка 3</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
+
         {% for product in products %}
-            <div class="col-md-3 p-3 h-100">
-                <div class="card mb-4 box-shadow vh-100">
+            <div class="col-md-3 p-3 ">
+                <div class="card mb-4 box-shadow vh-60">
                     <img class="card-img-top" src="{{ product.photo.url }}" alt="{{ product.name }}">
                     <div class="card-body">
                         <h4 class="card-title">{{ product.name }}</h4>

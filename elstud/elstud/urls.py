@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 
 from elstud import settings
-from shop.views import categories
+from shop.views import *
 from django.urls import path, include
 
 urlpatterns = [
