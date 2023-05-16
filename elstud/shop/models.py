@@ -57,6 +57,8 @@ class ProductCategory(models.Model):
         verbose_name_plural = 'Категории продуктов'
 
 
+
+
     # hint
     # категория = Категория.objects.get(id=1)
     # товары = категория.товаркатегория_set.all().values_list('товар__название', flat=True)
@@ -65,6 +67,7 @@ class ProductCategory(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Сумма заказа')
+    quantity = models.IntegerField(default=1, verbose_name='Количество товаров в корзине')
 
 
 class CartItem(models.Model):
@@ -79,6 +82,7 @@ class CartItem(models.Model):
 
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0, verbose_name='Количество избранных товаров')
 
 
 class WishlistItem(models.Model):
@@ -88,3 +92,6 @@ class WishlistItem(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def __str__(self):
+        return self.product.name

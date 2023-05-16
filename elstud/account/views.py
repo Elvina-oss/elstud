@@ -109,6 +109,9 @@ def edit_user_profile(request, slug):
             if user_profile_form.cleaned_data['is_user_manager']:
                 user_manager_group = Group.objects.get(name='user_managers')
                 user_manager_group.user_set.add(us)
+            if user_profile_form.cleaned_data['is_shop_manager']:
+                user_manager_group = Group.objects.get(name='shop_managers')
+                user_manager_group.user_set.add(us)
             user_form.save()
             return redirect('user_list')
     else:

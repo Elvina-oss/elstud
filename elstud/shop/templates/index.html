@@ -1,4 +1,6 @@
 {% extends 'base_shop.html' %}
+
+
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -30,10 +32,18 @@
       <ul class="navbar-nav me-3 mb-2 mb-lg-0">
         {% if not perms.shop.add_product %}
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi-heart text-danger" ></i> Избранное</a>
+          <a class="nav-link" href="{% url 'wishlist' %}"><i class="bi-heart-fill text-danger " ></i>
+              {% if wishlist_quantity > 0%}
+              <span class="badge rounded-pill text-danger wishlist-quantity">{{wishlist_quantity}}</span>
+              {% endif %}
+              Избранное</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi-cart text-success"></i> Корзина</a>
+          <a class="nav-link" href="{% url 'cart' %}"><i class="bi-cart text-success"></i>
+              {% if cart_quantity > 0%}
+              <span class="badge rounded-pill text-success cart-quantity">{{cart_quantity}}</span>
+              {% endif %}
+              Корзина</a>
         </li>
         {% endif %}
 
@@ -48,20 +58,32 @@
 
         {% for product in products %}
             <div class="col-md-3 p-3 ">
-                <div class="card mb-4 box-shadow vh-60">
+                <div class="card mb-4 box-shadow h-100">
                     <img class="card-img-top" src="{{ product.photo.url }}" alt="{{ product.name }}">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h4 class="card-title">{{ product.name }}</h4>
                         <p class="card-text">{{ product.content | truncatechars:100}}</p>
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <a href="#" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                                <a href="#" class="btn btn-sm btn-outline-success">
+                                {% if product.id not in cart_products_id %}
+                                <a href="#" class="btn btn-sm btn-outline-success cart-add" data-product-slug="{{ product.slug }}">
                                     <i class="bi-cart-plus" style="font-size: 1rem;"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-danger">
-                                    <i class="bi-heart" style="font-size: 1rem;"></i>
+                                {% else %}
+                                <a href="#" class="btn btn-sm btn-outline-success" data-product-slug="{{ product.slug }}">
+                                    <i class="bi-cart-check" style="font-size: 1rem;"></i>
                                 </a>
+                                {% endif %}
+                                {% if  product.id not in wishlist_products_id %}
+                                    <a href="#" class="btn btn-sm btn-outline-danger favorite-icon" data-product-slug="{{ product.slug }}">
+                                        <i class="bi-heart" style="font-size: 1rem;"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="#" class="btn btn-sm btn-outline-danger unfavorite-icon" data-product-slug="{{ product.slug }}">
+                                        <i class="bi-heart-fill" style="font-size: 1rem;"></i>
+                                    </a>
+                                {% endif %}
                             </div>
                             <small class="text-muted">{{ product.price }}</small>
                         </div>
@@ -71,4 +93,72 @@
         {% endfor %}
     </div>
 </div>
+
+
+<script>
+$(document).on('click', '.favorite-icon', function(e) {
+    e.preventDefault();
+    var $icon = $(this).find('i');
+    var productSlug = $(this).data('product-slug');
+
+
+    $.post('{% url "add_to_wishlist" %}', {'product_slug': productSlug}, function(response) {
+        if (response.success) {
+            $icon.toggleClass('bi-heart bi-heart-fill');
+            $('#wishlist-quantity').text(response.wishlist_quantity);
+            var $wishlistQuantity = $('.wishlist-quantity');
+            console.log(response);
+            if (response.wishlist_quantity > 0) {
+                $wishlistQuantity.text(response.wishlist_quantity).show();
+            } else {
+                $wishlistQuantity.hide();
+            }
+        }
+    });
+});
+
+$(document).on('click', '.unfavorite-icon', function(e) {
+    e.preventDefault();
+    var $icon = $(this).find('i');
+    var productSlug = $(this).data('product-slug');
+
+
+    $.post('{% url "delete_from_wishlist" %}', {'product_slug': productSlug}, function(response) {
+        if (response.success) {
+            $icon.toggleClass('bi-heart-fill bi-heart');
+            $('#wishlist-quantity').text(response.wishlist_quantity);
+            var $wishlistQuantity = $('.wishlist-quantity');
+            if (response.wishlist_quantity > 0) {
+                $wishlistQuantity.text(response.wishlist_quantity).show();
+            } else {
+                $wishlistQuantity.hide();
+            }
+        }
+    });
+});
+
+$(document).on('click', '.cart-add', function(e) {
+    e.preventDefault();
+    var $icon = $(this).find('i');
+    var productSlug = $(this).data('product-slug');
+
+
+    $.post('{% url "add_to_cart" %}', {'product_slug': productSlug}, function(response) {
+        if (response.success) {
+            $icon.toggleClass('bi-cart-plus bi-cart-check');
+            $('#cart-quantity').text(response.cart_quantity);
+            var $cartQuantity = $('.cart-quantity');
+            if (response.cart_quantity > 0) {
+                $cartQuantity.text(response.cart_quantity).show();
+            } else {
+                $cartQuantity.hide();
+            }
+
+        }
+    });
+});
+</script>
+
+
+
 {% endblock %}
