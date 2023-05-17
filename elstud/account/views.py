@@ -53,8 +53,12 @@ def create_new_user_view(request):
     else:
         user_form = UserForm()
         user_profile_form = UserProfileForm()
-    return render(request, 'new_user.html', {'user_form' : user_form, 'user_profile_form': user_profile_form,
-                                             'tittle' : 'Создание нового пользователя'})
+    context = {
+        'user_form': user_form,
+        'user_profile_form': user_profile_form,
+        'tittle': 'Создание нового пользователя'
+    }
+    return render(request, 'new_user.html', context)
 
 
 @permission_required('auth.add_user')
@@ -104,17 +108,22 @@ def edit_user_profile(request, slug):
     if request.method == 'POST':
         user_profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         user_form=UserEditForm(request.POST, instance=us)
+        print('first')
         if user_profile_form.is_valid() and user_form.is_valid():
             user_profile_form.save()
+            print('secind')
             if user_profile_form.cleaned_data['is_user_manager']:
                 user_manager_group = Group.objects.get(name='user_managers')
                 user_manager_group.user_set.add(us)
+                print('3')
             if user_profile_form.cleaned_data['is_shop_manager']:
                 user_manager_group = Group.objects.get(name='shop_managers')
                 user_manager_group.user_set.add(us)
+                print('4')
             user_form.save()
             return redirect('user_list')
     else:
+        print('5')
         user_profile_form = UserProfileForm(instance=user_profile)
         user_form = UserEditForm(instance=us)
 
@@ -136,8 +145,7 @@ def change_password(request, slug):
         form = SetPasswordForm(user=user, data=request.POST)
         if form.is_valid():
             user = form.save()
-            # Обновляем сессионный ключ, чтобы пользователь оставался авторизованным
-            update_session_auth_hash(request, user)
+            update_session_auth_hash(request, user) #не надо
             messages.success(request, "Пароль успешно изменен")
             return redirect('user_list')
     else:

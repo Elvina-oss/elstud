@@ -114,12 +114,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+# https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIR = [
-    os.path.join(BASE_DIR, '/static'),
-]
+STATICFILES_DIR = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -130,4 +129,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
 LOGOUT_REDIRECT_URL = reverse_lazy('home')
-OPENCAGE_API_KEY = 'e2844df096ca40c195f2d21a441199d0'
+
+YANDEX_MAP_API = '7238123d-635f-4ab9-82ee-6187c9c3fd0b'

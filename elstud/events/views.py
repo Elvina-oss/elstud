@@ -1,61 +1,41 @@
-from django.conf import settings
-from django.http import HttpResponse
+
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.views.generic.base import TemplateView
+
+from events.forms import *
+from events.models import *
 
 
-from events.forms import EventForm
+def event_list(request):
+    events = Event.objects.all()
+    data = serializers.serialize('json', events)
+    return JsonResponse(data, safe=False)
 
-import requests
 
-
-def index(request):
+def event_list_map(request):
+    api_key = settings.YANDEX_MAP_API
     context = {
-        'tittle': 'События',
+        'api_key': api_key,
+        'title': 'Карта событий',
     }
-    return render(request, 'map.html', context=context)
+    return render(request, 'map.html', {'api_key': api_key})
 
-
-class MarkersMapView(TemplateView):
-    """Markers map view."""
-    template_name = "map.html"
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['tittle'] = 'Карта'
-        return context
 
 def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('home')
+            event = form.save(commit=False)
+            event.latitude = request.POST.get('latitude')
+            event.longitude = request.POST.get('longitude')
+            event.save()
+            return redirect('event_list')
     else:
         form = EventForm()
-    return render(request, 'add_event.html', {'form': form})
-
-
-from django.shortcuts import render
-from django.conf import settings
-from .models import Event
-import json
-
-def map_view(request):
-    events = Event.objects.all()
-    markers = []
-    for event in events:
-        markers.append({
-            'name': event.tittle,
-            'lat': event.latitude,
-            'lng': event.longitude,
-        })
-
-    center_lat = 55.796127
-    center_lng = 49.106405
-
-    return render(request, 'map.html', {
-        'center_lat': center_lat,
-        'center_lng': center_lng,
-        'markers': json.dumps(markers),
-        'mapbox_access_token': settings.MAPBOX_ACCESS_TOKEN,
-    })
+    context = {
+        'form': form,
+        'title': 'Создание события',
+        'api_key': settings.YANDEX_MAP_API,
+    }
+    return render(request, 'add_event.html', context)

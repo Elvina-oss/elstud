@@ -1,14 +1,48 @@
 {% extends 'base_account.html' %}
 {% block content %}
-<h3> {{tittle}}</h3>
-<div class="content-section">
-    <form method="POST"  enctype="multipart/form-data">
-        {% csrf_token %}
-        {{user_form.as_p}}
-        {{user_profile_form.as_p}}
-        <a href="{% url 'change_password' user_profile.slug %}"><button type="button" class="btn btn-outline-secondary">Поменять пароль</button></a>
-        <button class= "btn btn-outline-info" type="submit">Сохранить</button>
-    </form>
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="container p-3">
+        <div class="form-error">{{ user_form.non_field_errors }}</div>
+        <div class="form-error">{{ user_profile_form.non_field_errors }}</div>
+          <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+            {% for f in user_form %}
+            <div class="form-group mb-3">
+              <label class="p-1" for="{{ f.id_for_label }}">{{ f.label }}:</label>
+              {{ f }}
+            </div>
+            {% endfor %}
+            {% for f in user_profile_form %}
+            <div class="form-group mb-3">
+              <label class="p-1" for="{{ f.id_for_label }}">{{ f.label }}:</label>
+              {{ f }}
+            </div>
+            {% endfor %}
+
+            <div class="text-center"> <!-- Обертываем кнопки в блок для центрирования -->
+              <a href="{% url 'change_password' user_profile.slug %}">
+                <button type="button" class="btn btn-outline-secondary">Поменять пароль</button>
+              </a>
+              <button type="submit" class="btn btn-primary text-white">Сохранить</button>
+            </div>
+            </form>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let inputs = document.querySelectorAll('.form-group input:not([type="checkbox"]), .form-group textarea');
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].classList.add('form-control');
+      inputs[i].classList.add('w-75'); // Добавляем класс w-75 для уменьшения ширины полей ввода
+      inputs[i].classList.add('mx-auto'); // Добавляем класс mx-auto для центрирования полей ввода
+    }
+  });
+</script>
+
 
 {% endblock %}

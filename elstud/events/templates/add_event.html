@@ -1,10 +1,66 @@
-{% extends 'base_events.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Add Event</title>
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Event</h1>
 
-{% block content %}
-  <h2>Add Event</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add</button>
-  </form>
-{% endblock %}
+    <form method="POST" action="{% url 'add_event' %}">
+        {% csrf_token %}
+        {% for f in form %}
+
+
+        {% endfor %}
+        {{ form.as_p }}
+        <div id="map"></div>
+
+        <button type="submit">Add Event</button>
+    </form>
+
+<script>
+    function loadMap() {
+        ymaps.ready(init);
+    }
+
+    function init() {
+        var map = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 10
+        });
+
+        var searchControl = new ymaps.control.SearchControl({
+            options: {
+                provider: 'yandex#search'
+            }
+        });
+        map.controls.add(searchControl);
+
+        searchControl.events.add('resultselect', function (e) {
+            var selected = e.get('target').getResultsArray()[e.get('index')];
+            var coordinates = selected.geometry.getCoordinates();
+            var address = selected.properties.get('text');
+
+            document.getElementById('id_address').value = address;
+            document.getElementById('id_latitude').value = coordinates[0];
+            document.getElementById('id_longitude').value = coordinates[1];
+        });
+
+        searchControl.events.add('clear', function () {
+            document.getElementById('id_address').value = '';
+            document.getElementById('id_latitude').value = '';
+            document.getElementById('id_longitude').value = '';
+        });
+    }
+</script>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=en_US&amp;apikey={{ api_key }}&amp;load=Map,geolocation,control.SearchControl" onload="loadMap()" type="text/javascript"></script>
+</body>
+</html>

@@ -19,7 +19,7 @@ class UserProfile(models.Model):
     is_student = models.BooleanField(default=True, verbose_name='Студент')
     group = models.CharField(max_length=20, blank=True, verbose_name='Номер группы')
     organization_name = models.CharField(max_length=50, blank=True, verbose_name='Название организации')
-    image = models.ImageField(upload_to='images/profiles', blank=True)
+    image = models.ImageField(upload_to='images/profiles', blank=True, verbose_name='Фото')
 
     def get_absolute_url(self):
         return reverse('profile', kwargs={'slug': self.slug})
