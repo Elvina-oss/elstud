@@ -1,0 +1,90 @@
+{% extends 'base_events.html' %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+        </div>
+        <div class="form-group">
+          {{ form.type.label_tag }}
+          {{ form.type }}
+        </div>
+        <div class="form-group">
+          {{ form.image.label_tag }}
+          {{ form.image }}
+        </div>
+        <div class="form-group">
+          {{ form.time.label_tag }}
+          {{ form.time }}
+        </div>
+        <div class="form-group">
+          {{ form.description.label_tag }}
+          {{ form.description }}
+        </div>
+        <div class="form-group">
+          {{ form.address }}
+        </div>
+        <div class="form-group">
+          {{ form.latitude }}
+        </div>
+        <div class="form-group">
+          {{ form.longitude }}
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить событие</button>
+      </div>
+      <div class="col">
+        <div id="map" style="width: 100%; height: 400px;"></div>
+      </div>
+    </div>
+  </div>
+</form>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey={{ api_key }}" type="text/javascript"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+  ymaps.ready(init);
+
+  function init() {
+    var myMap = new ymaps.Map('map', {
+      center: [55.473244, 49.73284], // kazan
+      zoom: 10
+    });
+
+    // Add a search control to the map
+    var searchControl = new ymaps.control.SearchControl({
+      options: {
+        provider: 'yandex#search',
+        resultsPane: 'places'
+      }
+    });
+    myMap.controls.add(searchControl);
+
+    // Listen for the 'resultselect' event when an address is selected
+    searchControl.events.add('resultselect', function (event) {
+      var results = searchControl.getResultsArray(); // Get the selected search results
+      var selected = event.get('index'); // Get the selected result index
+
+      var name = results[selected].properties.get('name');
+      var coordinates = results[selected].geometry.getCoordinates();
+
+      ymaps.geocode(coordinates).then(function (response) {
+        var firstGeoObject = response.geoObjects.get(0);
+        var address = firstGeoObject.getAddressLine();
+
+        // Retrieve the latitude and longitude from the coordinates
+        var latitude = coordinates[0];
+        var longitude = coordinates[1];
+        document.getElementById('id_address').value = address;
+        document.getElementById('id_latitude').value = latitude;
+        document.getElementById('id_longitude').value = longitude;
+      });
+    });
+  }
+</script>
+
+{% endblock %}

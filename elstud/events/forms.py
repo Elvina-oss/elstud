@@ -1,12 +1,13 @@
 from django import forms
 from .models import Event
 
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['tittle', 'address', 'latitude', 'longitude', 'type', 'image', 'time', 'description']
+        fields = ['title', 'type', 'image', 'time', 'description', 'address', 'latitude', 'longitude']
         widgets = {
-            'latitude': forms.HiddenInput(),
-            'longitude': forms.HiddenInput(),
             'address': forms.HiddenInput(),
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput()
         }

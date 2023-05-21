@@ -2,29 +2,41 @@
 
 {% block content %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+<style>
+    .main{
+        padding: 35px;
+     }
+</style>
 
-    <div class="form-error">{{ user_form.non_field_errors }}</div>
-    <div class="form-error">{{ user_profile_form.non_field_errors }}</div>
-    <div class="container p-3">
+<div class="container-fluid  mb-3 ">
+  <div class="row justify-content-center align-items-center main">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary bg-opacity-50 bg-gradient">{{ tittle }}</div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {% for f in user_form %}
+            <div class="form-group mb-3">
+              <label for="{{ f.id_for_label }}">{{ f.label }}:</label>
+              {{ f }}
+            </div>
+            {% endfor %}
+            {% for f in user_profile_form %}
+            <div class="form-group mb-3">
+              <label for="{{ f.id_for_label }}">{{ f.label }}:</label>
+              {{ f }}
+            </div>
+            {% endfor %}
 
-        {% for f in user_form %}
-        <div class="form-group mb-3">
-          <label for="{{ f.id_for_label }}">{{ f.label }}:</label>
-          {{ f }}
+
+            <button type="submit" class="btn btn-outline-primary w-3">{{ 'Создать профиль'|title }}</button>
+          </form>
         </div>
-        {% endfor %}
-        {% for f in user_profile_form %}
-        <div class="form-group mb-3">
-          <label for="{{ f.id_for_label }}">{{ f.label }}:</label>
-          {{ f }}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary">Создать</button>
+      </div>
     </div>
-
-</form>
+  </div>
+</div>
 
 <script>
   // Add form-control class to all inputs inside form-group elements

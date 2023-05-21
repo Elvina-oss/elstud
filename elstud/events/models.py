@@ -2,11 +2,11 @@ import requests
 from django.conf import settings
 from django.db import models
 
-
+from account.models import UserProfile
 
 
 class Event(models.Model):
-    tittle = models.CharField(max_length=200, verbose_name='Название')
+    title = models.CharField(max_length=200, verbose_name='Название')
     address = models.CharField(max_length=200, verbose_name='Адрес')
     latitude = models.FloatField(null=True, blank=True, verbose_name='Широта')
     longitude = models.FloatField(null=True, blank=True, verbose_name='Долгота')
@@ -14,6 +14,7 @@ class Event(models.Model):
     image = models.ImageField(blank=True, upload_to='images/events/', verbose_name='Фото')
     time = models.DateTimeField(verbose_name='Дата и время')
     description = models.TextField(verbose_name='Описание')
+    organizator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
 
 

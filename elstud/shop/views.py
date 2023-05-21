@@ -178,7 +178,7 @@ def add_to_cart(request):
         cart, created = Cart.objects.get_or_create(user=request.user)
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         # cart.quantity = F('quantity') + 1
-        cart.quantity = CartItem.objects.filter(cart=cart).count()
+        cart.quantity = CartItem.objects.filter(cart=   cart).count()
         cart.save()
         cart_quantity = cart.quantity
         return JsonResponse({'success': True, 'cart_quantity':cart_quantity})

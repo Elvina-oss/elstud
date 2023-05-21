@@ -1,0 +1,25 @@
+{% extends 'base_events.html' %}
+{% block content %}
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey={{ api_key }}" type="text/javascript"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div id="map" style="width: 50%; height: 400px;"></div>
+<script>
+    ymaps.ready(init);
+
+    function init() {
+      var myMap = new ymaps.Map('map', {
+        center: [55.796129, 49.106408], // Set the initial map center coordinates
+        zoom: 10 // Set the initial zoom level
+      });
+
+      // Add markers for each event's latitude and longitude
+      {% for event in events %}
+        var latitude = "{{ event.latitude|safe }}";
+        var longitude = "{{ event.longitude|safe }}";
+        var marker = new ymaps.Placemark([latitude, longitude]);
+        myMap.geoObjects.add(marker);
+     {% endfor %}
+    }
+  </script>
+{% endblock %}

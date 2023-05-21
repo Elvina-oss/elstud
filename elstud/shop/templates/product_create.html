@@ -1,9 +1,12 @@
 {% extends 'base_shop.html' %}
 
 {% block content %}
-
-<h3>{{tittle}}</h3>
-<div class="container mb-3">
+<style>
+  .main{
+    padding: 35px;
+   }
+</style>
+<div class="container mb-3 main">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
@@ -19,7 +22,7 @@
             {% endfor %}
 
 
-            <button type="submit" class="btn btn-outline-primary w-3 text-white">{{ 'Добавить'|title }}</button>
+            <button type="submit" class="btn btn-primary w-3 text-white">{{ 'Добавить'|title }}</button>
           </form>
         </div>
       </div>
