@@ -11,3 +11,4 @@ class EventForm(forms.ModelForm):
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput()
         }
+

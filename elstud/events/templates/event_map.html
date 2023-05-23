@@ -17,7 +17,15 @@
       {% for event in events %}
         var latitude = "{{ event.latitude|safe }}";
         var longitude = "{{ event.longitude|safe }}";
-        var marker = new ymaps.Placemark([latitude, longitude]);
+        var marker = new ymaps.Placemark([latitude, longitude],{
+          hintContent: '{{ event.title }}'}, {
+          url: "#"
+        });
+        marker.events.add('click', function (e) {
+                var marker = e.get('target');
+                var url = marker.options.get('url');
+                window.location.href = url;  // Navigate to the destination URL
+            });
         myMap.geoObjects.add(marker);
      {% endfor %}
     }
