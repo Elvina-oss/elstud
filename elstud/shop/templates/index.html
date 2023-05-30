@@ -34,7 +34,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'wishlist' %}"><i class="bi-heart-fill text-danger " ></i>
               {% if wishlist_quantity > 0%}
-              <span class="badge rounded-pill text-danger wishlist-quantity">{{wishlist_quantity}}</span>
+              <span class="badge rounded-pill text-danger wishlist-quantity">{{wishlist_quantity|safe}}</span>
               {% endif %}
               Избранное</a>
         </li>
@@ -100,16 +100,19 @@ $(document).on('click', '.favorite-icon', function(e) {
     e.preventDefault();
     var $icon = $(this).find('i');
     var productSlug = $(this).data('product-slug');
+    var $iconA = $(this);
 
 
     $.post('{% url "add_to_wishlist" %}', {'product_slug': productSlug}, function(response) {
         if (response.success) {
             $icon.toggleClass('bi-heart bi-heart-fill');
-            $('#wishlist-quantity').text(response.wishlist_quantity);
+            $icon.removeClass('favorite-icon').addClass('unfavorite-icon');
             var $wishlistQuantity = $('.wishlist-quantity');
             console.log(response);
+            $wishlistQuantity.text(response.wishlist_quantity);
             if (response.wishlist_quantity > 0) {
-                $wishlistQuantity.text(response.wishlist_quantity).show();
+                console.log(response.wishlist_quantity);
+                $wishlistQuantity.show();
             } else {
                 $wishlistQuantity.hide();
             }

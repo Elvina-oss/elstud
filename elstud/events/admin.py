@@ -6,7 +6,7 @@ from events.models import *
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'address', 'type', 'image', 'time', 'description']
+    list_display = ['id', 'title', 'address', 'type', 'image', 'time_start', 'time_end', 'description']
 
 
 admin.site.register(Event, EventAdmin)

@@ -108,22 +108,21 @@ def edit_user_profile(request, slug):
     if request.method == 'POST':
         user_profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         user_form=UserEditForm(request.POST, instance=us)
-        print('first')
+
         if user_profile_form.is_valid() and user_form.is_valid():
             user_profile_form.save()
-            print('secind')
             if user_profile_form.cleaned_data['is_user_manager']:
                 user_manager_group = Group.objects.get(name='user_managers')
                 user_manager_group.user_set.add(us)
-                print('3')
             if user_profile_form.cleaned_data['is_shop_manager']:
-                user_manager_group = Group.objects.get(name='shop_managers')
+                user_manager_group = Group.objects.get(name='shop_manager')
                 user_manager_group.user_set.add(us)
-                print('4')
+            if user_profile_form.cleaned_data['is_event_manager']:
+                user_manager_group = Group.objects.get(name='event_manager')
+                user_manager_group.user_set.add(us)
             user_form.save()
             return redirect('user_list')
     else:
-        print('5')
         user_profile_form = UserProfileForm(instance=user_profile)
         user_form = UserEditForm(instance=us)
 

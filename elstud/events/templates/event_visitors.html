@@ -1,0 +1,49 @@
+{% extends 'base_events.html' %}
+{% block content %}
+
+<a href="{% url 'event_visitors' slug=event.slug %}" class="btn btn-outline-primary">Все участники ({{ total_count }})</a>
+
+<a href="{% url 'event_visitors' slug=event.slug %}?assurance=False" class="btn btn-outline-primary">Возможно идут ({{ assurance_false_count }})</a>
+
+<a href="{% url 'event_visitors' slug=event.slug %}?assurance=True" class="btn btn-outline-primary">Точно идут ({{ assurance_true_count }})</a>
+
+<div class="row">
+    {% for v in visitors %}
+    <div class="col-md-4 col-xs-6 border-primary mb-3">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-12">
+                    <div class="card-header bg-primary bg-opacity-25 bg-gradient">
+                        <p class="card-text">
+                            <h5 class="card-title">
+                            {{v.user.first_name}} {{v.user.last_name}}
+                            </h5>
+                        </p>
+                    </div>
+                </div>
+                {% if v.user.userprofile.image %}
+                <div class="col-md-6 p-2">
+                        <img src="{{v.user.userprofile.image.url}}" width="100%" alt="{{v.user.username}}">
+                </div>
+                {% endif %}
+                <div class="col-md-6">
+                    <div class="card-body">
+                        {% if v.user.userprofile.is_student %}
+                        <p class="card-text">Студент</p>
+                        <p class="card-text">Номер группы: {{v.user.userprofile.group}}</p>
+                        {% else %}
+                        <p class="card-text">Название организации: {{v.user.userprofile.organization_name}}</p>
+                        {% endif %}
+                        {% if v.assurance %}
+                        <p class="card-text text-success">Точно пойдет</p>
+                        {% else %}
+                        <p class="card-text text-info">Возможно пойдет</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

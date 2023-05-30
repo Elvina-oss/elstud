@@ -1,0 +1,39 @@
+{% extends 'base_events.html' %}
+{% block content %}
+
+<div class="container">
+    {% block menu %}
+    <div class="row">
+        <div class="btn-group" role="group" aria-label="View Options">
+            <button type="button" class="btn btn-primary" disabled>Список</button>
+            <a href="{% url 'event_map' %}" class="btn btn-primary">На карте</a>
+        </div>
+    </div>
+    {% endblock %}
+    {% for event in events %}
+    <div class="row" id="event-{{ event.id|add:0 }}">
+        <div class="col-md-8">
+            <a href="{% url 'event_detail' slug=event.slug %}"><h4>{{ event.title }}</h4></a>
+            <p>Адрес: {{event.address}}</p>
+            <p>Описание: {{ event.description }}</p>
+            <p>Организатор: {{event.organizator.user.first_name}} {{event.organizator.user.last_name}}</p>
+            {% if event.organizator.is_student %}
+            <p>Студент группы {{event.organizator.group}}</p>
+            {% else %}
+            <p>Организация: {{event.organizator.organization_name}}</p>
+            {% endif %}
+        </div>
+        {% if event.image %}
+        <div class="col-md-4">
+            <img src="{{event.image.url}}" alt="Изображение {{event.title}}" style="height: 200px;">
+        </div>
+        {% endif %}
+        {% block approve_buttons %}{% endblock %}
+    </div>
+    {% empty %}
+    <div class="row">
+        Событий нет
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

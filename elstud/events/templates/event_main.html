@@ -1,6 +1,6 @@
-{% extends 'base_event.html' %}
+{% extends 'base_events.html' %}
 {% block content %}
-
-
-
+<a href="{% url 'event_list' %}">Список событий</a>
+<a href="{% url 'new_event' %}">Добавить событие</a>
+<a href="{% url 'my_events' %}">Мои события</a>
 {% endblock %}

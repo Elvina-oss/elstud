@@ -15,7 +15,9 @@ class Event(models.Model):
     longitude = models.FloatField(null=True, blank=True, verbose_name='Долгота')
     type = models.CharField(max_length=100, blank=True, verbose_name='Тип мероприятия')
     image = models.ImageField(blank=True, upload_to='images/events/', verbose_name='Фото')
-    time = models.DateTimeField(verbose_name='Дата и время')
+    time_start = models.DateTimeField(verbose_name='Дата и время начала')
+    time_end = models.DateTimeField(verbose_name='Дата и время окончания')
+    approved = models.BooleanField(default=False)
     description = models.TextField(verbose_name='Описание')
     organizator = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
@@ -23,10 +25,10 @@ class Event(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('event', kwargs={'slug': self.slug})
+        return reverse('event_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.title + str(self.pk))
         super(Event, self).save(*args, **kwargs)
 
 

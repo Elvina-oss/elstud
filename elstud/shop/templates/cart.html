@@ -1,1 +1,96 @@
 {% extends 'base_shop.html' %}
+
+{% block content %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Название</th>
+        <th>Изображение</th>
+        <th>Количество</th>
+        <th>Цена</th>
+        <th>Сумма</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart_items %}
+        <tr id="row_{{ item.id }}">
+          <td><input type="checkbox" class="item-checkbox" data-item-id="{{ item.id }}"></td>
+          <td>{{ item.product.name }}</td>
+          <td><img src="{{ item.product.photo.url }}" alt="{{ item.product.name }}" height="50"></td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger decrement-quantity" data-item-id="{{ item.id }}">-</button>
+            <span id="quantity_{{ item.id }}">{{ item.quantity }}</span>
+            <button class="btn btn-sm btn-outline-success increment-quantity" data-item-id="{{ item.id }}">+</button>
+          </td>
+          <td>{{ item.product.price }}</td>
+          <td id="subtotal_{{ item.id }}">{{ item.subtotal|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="text-end">
+    <h5>Итого: <span id="total-price">0.00</span></h5>
+    <button class="btn btn-primary">Оформление заказа</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $(".increment-quantity").click(function() {
+        var itemId = $(this).data("item-id");
+        updateQuantity(itemId, 1);
+      });
+
+      $(".decrement-quantity").click(function() {
+        var itemId = $(this).data("item-id");
+        updateQuantity(itemId, -1);
+      });
+
+      $(".item-checkbox").change(function() {
+        calculateTotalPrice();
+      });
+
+      function updateQuantity(itemId, quantityChange) {
+        $.ajax({
+          type: "POST",
+          url: '{% url "update_quantity" %}',
+          data: {
+            item_id: itemId,
+            quantity_change: quantityChange
+          },
+          success: function(response) {
+            if (response.deleted) {
+              $("#row_" + itemId).remove();
+            } else{
+              var quantityElement = $("#quantity_" + itemId);
+              var newQuantity = parseInt(quantityElement.text()) + quantityChange;
+              quantityElement.text(newQuantity);
+
+              var subtotal = parseFloat(response.subtotal).toFixed(2);
+              var subtotalElement = $("#subtotal_" + itemId);
+              subtotalElement.text(subtotal);
+            }
+            console.log("i am here");
+            calculateTotalPrice();
+          }
+        });
+      }
+
+      // Trigger the calculation of the initial total price
+      calculateTotalPrice();
+
+      function calculateTotalPrice() {
+        var total = 0;
+        $(".item-checkbox:checked").each(function() {
+          var itemId = $(this).data("item-id");
+          var subtotal = parseFloat($("#subtotal_" + itemId).text());
+          total += subtotal;
+        });
+
+        $("#total-price").text(total.toFixed(2));
+      }
+    });
+  </script>
+{% endblock %}

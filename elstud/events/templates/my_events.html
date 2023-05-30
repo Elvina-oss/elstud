@@ -1,0 +1,33 @@
+{% extends 'base_events.html' %}
+{% block content %}
+<div class="container">
+    {% for event in events %}
+    <div class="row">
+        <h4>{{ event.title }}</h4>
+        <div class="col">
+            <p>Адрес: {{event.address}}</p>
+            <p>Описание: {{ event.description }}</p>
+            <p>Организатор: {{event.organizator.user.first_name}} {{event.organizator.user.last_name}}</p>
+            {% if event.organizator.is_student %}
+            <p>Студент группы {{event.organizator.group}}</p>
+            {% else %}
+            <p>Организация: {{event.organizator.organization_name}}</p>
+        </div>
+        <div class="col">
+            {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="img-fluid ">
+            {% endif %}
+        </div>
+        <a href="{% url 'event_visitors' slug=event.slug %}" class="btn btn-outline-success">Посмотреть участников</a>
+        <a href="{% url 'edit_event' slug=event.slug %}" class="btn btn-outline-info">Редактировать</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="row">
+        Вы еще не создали ни одного события
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

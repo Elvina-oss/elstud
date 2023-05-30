@@ -1,0 +1,67 @@
+{% extends 'event_list.html' %}
+{% block menu %}
+<div class="row">
+    <div class="btn-group" role="group" aria-label="View Options">
+        <button type="button" class="btn btn-primary" disabled>Неодобренные события</button>
+        <a href="#" class="btn btn-primary">Одобренные события</a>
+    </div>
+</div>
+{% endblock %}
+{% block approve_buttons %}
+<div class="row">
+    <div class="btn-group" role="group" aria-label="Actions">
+        <button class="btn btn-danger mr-2 rounded delete-button" data-event-id="{{event.id}}">Удалить</button>
+        <button class="btn btn-success rounded approve-button" data-event-id="{{ event.id }}">Одобрить</button>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.approve-button').click(function() {
+        var eventId = $(this).data('event-id');
+        $.ajax({
+            url: '{% url "approve_event" %}',
+            type: 'POST',
+            data: {
+                event_id: eventId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                // Handle the response if needed
+                $("#event-" + eventId).hide();
+                console.log('Event approved successfully');
+            },
+            error: function(xhr, errmsg, err) {
+                // Handle any error that occurs during the AJAX request
+                console.log('Error occurred while approving event:', err);
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('.delete-button').click(function() {
+        var eventId = $(this).data('event-id');
+        $.ajax({
+            url: '{% url "delete_event" %}',
+            type: 'POST',
+            data: {
+                event_id: eventId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                // Handle the response if needed
+                $("#event-" + eventId).hide();
+                console.log('Event deleted successfully');
+            },
+            error: function(xhr, errmsg, err) {
+                // Handle any error that occurs during the AJAX request
+                console.log('Error occurred while deleting event:', err);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

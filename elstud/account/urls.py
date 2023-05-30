@@ -19,4 +19,5 @@ urlpatterns = [
     path('<slug:slug>/edit', edit_user_profile, name='edit_user'),
     path('<slug:slug>/password', change_password, name='change_password'),
 
+
 ]

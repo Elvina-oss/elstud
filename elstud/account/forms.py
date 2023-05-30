@@ -32,6 +32,8 @@ class UserProfileForm(forms.ModelForm):
     is_user_manager = forms.BooleanField(label="Управление пользователями", widget=forms.CheckboxInput(), required=False)
     is_shop_manager = forms.BooleanField(label="Управление магазином", widget=forms.CheckboxInput(),
                                          required=False)
+    is_event_manager = forms.BooleanField(label="Управление событиями", widget=forms.CheckboxInput(),
+                                         required=False)
 
     class Meta:
         model = UserProfile

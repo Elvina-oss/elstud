@@ -1,14 +1,16 @@
 from django.contrib.auth.decorators import permission_required, login_required
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 
+from events.views import is_ajax
 from shop.forms import ProductForm
 from shop.models import *
 
@@ -39,16 +41,16 @@ class ProductListView(ListView):
         context['tittle'] = 'Магазин'
         context['wishlist_products_id'], context['wishlist_quantity'] = self.get_wishlist_products_and_quantity()
         context['cart_products_id'], context['cart_quantity'] = self.get_cart_products_and_quantity()
-
-
-
         return context
 
     def get_queryset(self):
         queryset = Product.objects.prefetch_related('productcategory_set__category')
         category_slug = self.kwargs.get('category_slug')
+        search_query = self.request.GET.get('q')
         if category_slug:
             queryset = queryset.filter(productcategory__category__slug=category_slug)
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
         return queryset
 
     def get_wishlist_products_and_quantity(self):
@@ -156,19 +158,25 @@ def delete_from_wishlist(request):
 class CartView(ListView):
     model = CartItem
     template_name = 'cart.html'
-    context_object_name = 'products'
+    context_object_name = 'cart_items'
 
     def get_queryset(self):
-        cart = Cart.objects.get_or_create(user=self.request.user)[0]
-        cart_items = CartItem.objects.filter(cart=cart)
-        product_ids = cart_items.values_list('product_id', flat=True)
-        products = Product.objects.filter(id__in=product_ids)
-        return products
+        user = self.request.user
+        queryset = super().get_queryset().filter(cart__user=user)
+        for item in queryset:
+            item.subtotal = item.quantity * item.product.price
+        return queryset
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tittle'] = 'Корзина'
+        total_price = sum(item.product.price * item.quantity for item in context['cart_items'])
+        context['total_price'] = total_price
         return context
+
+
+
 
 @csrf_exempt
 def add_to_cart(request):
@@ -201,3 +209,35 @@ def delete_from_cart(request):
         return JsonResponse({'success': True, 'cart_quantity': str(cart_quantity)})
     else:
         return JsonResponse({'success': False})
+
+@csrf_exempt
+def update_quantity(request):
+    if request.method == 'POST' and is_ajax(request):
+        item_id = request.POST.get('item_id')
+        quantity_change = int(request.POST.get('quantity_change'))
+
+        try:
+            cart_item = CartItem.objects.get(id=item_id)
+            cart_item.quantity += quantity_change
+
+            if cart_item.quantity < 1:
+                cart_item.delete()
+                cart = cart_item.cart
+                cart.quantity = CartItem.objects.filter(cart=cart).count()
+                cart.save()
+                return JsonResponse({
+                    'deleted': True,
+                })
+
+            cart_item.save()
+            subtotal = cart_item.quantity * cart_item.product.price
+
+            return JsonResponse({
+                'subtotal': subtotal,
+                'deleted': False,
+            })
+
+        except CartItem.DoesNotExist:
+            pass
+
+    return JsonResponse({}, status=400)

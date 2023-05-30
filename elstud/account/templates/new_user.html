@@ -14,7 +14,7 @@
       <div class="card">
         <div class="card-header bg-primary bg-opacity-50 bg-gradient">{{ tittle }}</div>
         <div class="card-body">
-          <form method="post">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% for f in user_form %}
             <div class="form-group mb-3">

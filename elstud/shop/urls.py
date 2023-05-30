@@ -11,7 +11,8 @@ urlpatterns = [
     path('wishlist/', WishListView.as_view(), name='wishlist'),
     path('add_to_cart/', add_to_cart, name='add_to_cart'),
     path('delete_from_cart/', delete_from_cart, name='delete_from_cart'),
-    path('cart/', CartView.as_view(), name='cart')
+    path('cart/', CartView.as_view(), name='cart'),
+    path('update_quantity', update_quantity, name='update_quantity')
 ]
 
 handler404 = pageNotFound

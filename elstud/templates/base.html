@@ -23,11 +23,11 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-primary bg-opacity-50 bg-gradient h-10">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">Электронный пропуск</a>
+        <a class="navbar-brand fs-3" >Электронный пропуск</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse fs-5" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'home' %}">Главная</a>
@@ -36,7 +36,7 @@
               <a class="nav-link" href="{% url 'shop_index' %}">Магазин</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">События</a>
+              <a class="nav-link" href="{% url 'event_main' %}">События</a>
             </li>
             {% if perms.auth.add_user %}
             <li class="nav-item">
@@ -46,6 +46,11 @@
             {% if perms.shop.add_product %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'user_managment' %}">Управление магазином</a>
+            </li>
+            {% endif %}
+            {% if perms.events.change_event %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'event_managment' %}">Управление событиями</a>
             </li>
             {% endif %}
           </ul>

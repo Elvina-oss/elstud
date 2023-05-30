@@ -9,6 +9,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # BBBorisov  Y2QmI1ah
 
 # PNatalie qO0fNTh7
+# AVasnetsova ?}kHWjD~
 from django.urls import reverse
 from django.utils.text import slugify
 
